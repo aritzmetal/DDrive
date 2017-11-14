@@ -53,6 +53,7 @@ public class DCliente extends Thread {
         ta.append("Introduce tu nombre");
         name = is.readLine().trim();
         if (name.indexOf('@') == -1) {
+        	ta.append(name);
           break;
         } else {
           os.println("The name should not contain '@' character.");

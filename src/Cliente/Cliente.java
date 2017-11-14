@@ -41,8 +41,9 @@ public class Cliente implements Runnable {
       clientSocket = new Socket(host, puertoDefecto);
       
       inputLine = new BufferedReader(new InputStreamReader(System.in));
-      os = new PrintStream(clientSocket.getOutputStream());
-      is = new DataInputStream(clientSocket.getInputStream());
+      		os = new PrintStream(clientSocket.getOutputStream());
+      		is = new DataInputStream(clientSocket.getInputStream());
+      		
     } catch (UnknownHostException e) {
       System.err.println("Don't know about host " + host);
     } catch (IOException e) {

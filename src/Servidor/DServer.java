@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintStream;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -147,7 +148,7 @@ public class DServer extends JFrame{
 			loggerServer.log(Level.FINE, "esperando al cliente...");
 			cliente = servidor.accept(); 															//Servidor acepta la conexion del cliente
 			
-		//	cliente.getInputStream().
+		InputStream is =cliente.getInputStream();
 			
 			for (i = 0; i < MaxClientes; i++) {
 		          if (hilosClientes[i] == null) {
