@@ -22,6 +22,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
+import java.net.UnknownHostException;
 import java.awt.event.ActionEvent;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
@@ -49,13 +53,24 @@ import java.awt.event.MouseListener;
 
 import javax.swing.SwingConstants;
 
+import Cliente.Mensaje;
 import datos.BD;
 
-public class Login extends JFrame {
-	public BD bd;
-	Logger logerLogin;
+public class Login extends JFrame implements Runnable {
+	private Logger logerLogin;
+	private int login =0;
 	
-	ArrayList<Usuario> listaUsers = new ArrayList<>();
+	private static Socket clientSocket = null;
+	  
+	//Flujos de salida/entrada de datos
+	private static ObjectInputStream is = null;
+	private static ObjectOutputStream os = null;
+	  
+	//Datos de conexion
+	private static String host = "localhost";
+	private static int puertoDefecto = 1050;
+	
+	
 	private JTextField textField;
 	private JPasswordField passwordField;
 	private JPasswordField passwordField_1;
@@ -95,10 +110,18 @@ public class Login extends JFrame {
 	private String[] lista;
 	Usuario us;
 	
-	public Login() {
+	public Login(String[] args) {
+		
+		//Inicializacion del socket y puerto
+		 if (args.length < 2) {
+		      System.out.println("Usage: java MultiThreadChatClient <host> <portNumber>\n"
+		              + "Now using host=" + host + ", portNumber=" + puertoDefecto);
+		    } else {
+		      host = args[0];
+		      puertoDefecto = Integer.valueOf(args[1]).intValue();
+		    }
 		
 		//Iniciamos aqui la base de datos
-		bd = new BD();
 		logerLogin = Logger.getLogger("ventanas.Login");
 		
 		us=null;
@@ -127,7 +150,6 @@ public class Login extends JFrame {
 		btnCancelar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				System.exit(0);
-				bd.desconectar();
 			}
 		});
 
@@ -330,13 +352,18 @@ public class Login extends JFrame {
 
 			public void actionPerformed(ActionEvent e) {
 				try {
-					realizarLogin(Login.this.textField.getText(),Login.this.passwordField.getText());
-				} catch (BaneadoException ex) {
-					textPane.setText("Error usuario" + ex.getUs().getNombre() + " baneado");
-					ex.mostrarException();
-					ex.printStackTrace();
-				} catch (NoUsuarioException ex) {
-					ex.mostrarNombre();
+					Usuario us = new Usuario(textField.getText(),passwordField.getText());
+					Mensaje msg = new Mensaje(us, "envio");
+					//Enviar mensaje al servidor para realizar el login
+					os.writeObject(msg);
+					
+					//Recibir la respuesta del server
+					 msg=(Mensaje) is.readObject();
+					textPane.setText(msg.getMess());
+				
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
 				}
 			}
 		});
@@ -345,16 +372,15 @@ public class Login extends JFrame {
 	}
 
 	private void crearRegistro(ActionEvent e) {
-		Registro reg = new Registro(bd, this, true) ;
-		this.dispose();
-		reg.setVisible(true);
-		JDialog jd = new JDialog(reg, Dialog.ModalityType.DOCUMENT_MODAL);
-		//Usuario.volcarUsuarios(listaUsers);
+		//Registro reg = new Registro(bd, this, true) ;
+		//this.dispose();
+		//reg.setVisible(true);
+		//JDialog jd = new JDialog(reg, Dialog.ModalityType.DOCUMENT_MODAL);
 		revalidate();
 	}
 
 
-
+/*
 	public String realizarLogin(String nom,String pass) throws BaneadoException, NoUsuarioException {
 		int login=0;
 		try {
@@ -375,11 +401,12 @@ public class Login extends JFrame {
 			throw new NoUsuarioException(textField.getText());
 		}
 	}
-
+*/
+	
 	//------------------------------------------------------------>Solo hace el cambio en el array, no en el fichero asi que es aparente
 	private void realizarCambio (String nom) throws PassIncorrectaException{
 		String pass = new String(passwordField_2.getPassword());
-		String preg_seguridad =(String) this.bd.obtenerSeleccion(nom,"pregunta_seguridad");
+		/*String preg_seguridad =(String) this.bd.obtenerSeleccion(nom,"pregunta_seguridad");
 						
 		if(preg_seguridad.equals(textField_3.getText())){
 			if(Arrays.equals(passwordField_1.getPassword(),passwordField_2.getPassword())){
@@ -387,11 +414,11 @@ public class Login extends JFrame {
 				this.bd.cambiarPass(textField.getText(), passwordField_1.getText());
 		
 			}
-		}
+		}*/
 	}
 
 	 public void mostrarPregSeguridad () throws  NoUsuarioException{
-		 Registro.cargarSeleccion(lista);		 
+		/* Registro.cargarSeleccion(lista);		 
 		 int  preg_seg=0;
 			
 		 if(!(this.textField.getText().length()==0)) {
@@ -413,7 +440,7 @@ public class Login extends JFrame {
 				
 				textPane_1.setText(lista[preg_seg]);
 			
-		
+	*/	
 	 }
 
 	 
@@ -444,4 +471,29 @@ public class Login extends JFrame {
 			}
 		});
 	}
+
+	@Override
+	public void run() {
+		 try {
+				clientSocket = new Socket(host, puertoDefecto);
+			
+		     
+				os = new ObjectOutputStream(clientSocket.getOutputStream());
+				is = new ObjectInputStream(clientSocket.getInputStream());
+
+			
+				 while(login==0) {
+					 Thread.sleep(1500);
+				 }
+				 
+				 os.close();
+			     is.close();
+			     clientSocket.close();
+			      
+		 } catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+		  	}
+		
 }

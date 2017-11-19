@@ -24,6 +24,15 @@ public class Usuario implements Serializable {
 		this.selecSeguridad = "0";
 		this.baneado = "no";
 	}
+	public Usuario(String nombre, String pass) {
+		this.DNI = "111";
+		setNombre(nombre);
+		setPass(pass);
+		this.preguntaSeguridad = null;
+		this.selecSeguridad = "0";
+		this.baneado = "no";
+		
+	}
 
 	public String getDNI() {
 		return DNI;

@@ -27,6 +27,7 @@ public class Encriptado {
 		SecretKeySpec skeySpec = new SecretKeySpec(key.getBytes(), algoritmo);
 		IvParameterSpec ivParameterSpec = new IvParameterSpec(iv.getBytes());
 		byte[] enc = decodeBase64(encriptado);
+		
 		cipher.init(Cipher.DECRYPT_MODE, skeySpec, ivParameterSpec);
 		byte[] desencriptado = cipher.doFinal(enc);
 		return new String(desencriptado);

@@ -6,6 +6,9 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.io.PrintStream;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -17,6 +20,8 @@ import javax.swing.Action;
 import javax.swing.JFrame;
 
 import hilos.ClientHandler;
+import usuarios.Usuario;
+
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
@@ -24,11 +29,18 @@ import java.awt.BorderLayout;
 import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
 import javax.swing.text.BadLocationException;
+
+import datos.BD;
+import excepciones.BaneadoException;
+import excepciones.NoUsuarioException;
+
 import java.awt.Font;
-import Cliente.DCliente;
 
 public class DServer extends JFrame{
+	
 	public DServer() {
+		
+
 		
 		inicializarVentana();
 	
@@ -51,11 +63,13 @@ public class DServer extends JFrame{
 	
 	JPanel panel;
 	
+	
 	public static final int MaxClientes = 5; 														//Numero maximo de clientes conectados a la vez
-	public static final DCliente[] hilosClientes = new DCliente[MaxClientes]; 							//Array de hilos de los clientes
+	public static final ClientHandler[] hilosClientes = new ClientHandler[MaxClientes]; 							//Array de hilos de los clientes
 	
 
 	public void inicializarVentana () {
+		this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		
 		
 		this.setBounds(600,300,600,400);
@@ -64,6 +78,7 @@ public class DServer extends JFrame{
 		 textArea = new JTextArea();
 		
 		textArea.setForeground(Color.WHITE);
+		textArea.setCaretColor(Color.WHITE);
 		textArea.setBackground(Color.BLACK);
 		textArea.setLineWrap(true);
 		textArea.setFont(new Font("Verdana", Font.BOLD, 18));
@@ -125,8 +140,9 @@ public class DServer extends JFrame{
 		case "exit":
 			
 			try {
-				System.exit(0);
 				servidor.close();
+				System.exit(0);
+				
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -140,36 +156,44 @@ public class DServer extends JFrame{
 	}
 	
 	public void  startServer(ServerSocket server,JTextArea ta) {
+		
+		
+		
 		while(true) {
 			try {
 			int i=0;
 			ta.append("Esperando clientes...\n");
 			
 			loggerServer.log(Level.FINE, "esperando al cliente...");
-			cliente = servidor.accept(); 															//Servidor acepta la conexion del cliente
+			cliente = servidor.accept(); 
 			
-		InputStream is =cliente.getInputStream();
+			//Servidor acepta la conexion del cliente
+				
 			
 			for (i = 0; i < MaxClientes; i++) {
 		          if (hilosClientes[i] == null) {
-		            (hilosClientes[i] = new DCliente(cliente, hilosClientes,textArea)).start();
+		            (hilosClientes[i] = new ClientHandler(cliente, hilosClientes,textArea)).start();
 		           ta.append("conexion con cliente nuevo \n");
 		            break;
 		          }
 		        }
 			
 			
+			
 			if (i == MaxClientes) {
-		          PrintStream os = new PrintStream(cliente.getOutputStream());
-		          os.println("Servidor ocupado.");
-		          os.close();
+		          ta.append("Servidor ocupado. \n");
 		          cliente.close();
 		        }
+			
+			
+			
 		      } catch (IOException e) {
 		        System.out.println(e);
 		      }
 		    }
 	}
+	
+
 	
 	public static void main(String [] args) {
 		
@@ -195,6 +219,7 @@ public class DServer extends JFrame{
 		}
 		
 		DServer ds = new DServer();
+		
 		
 	
 		  }
