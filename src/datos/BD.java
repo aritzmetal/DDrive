@@ -84,14 +84,20 @@ public class BD {
 		}
 	}
 	
-	public void crearUsuario (String dni, String nom, String pass, String preg_seg, int sel_seg){
+	public void crearUsuario (Usuario us){
 		try {
 		//	pass = Encriptado.encriptar(this.key, this.iv, pass);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		String query = "INSERT INTO usuarios(DNI,nombre,password,pregunta_seguridad,seleccion_seguridad,baneado) VALUES('"+dni+"','"+nom+"','"+pass+"','"+preg_seg+"',"+sel_seg+",0)";
+		String query = "INSERT INTO usuarios(DNI,nombre,password,pregunta_seguridad,seleccion_seguridad,baneado) VALUES('"
+		+us.getDNI()+"','"
+		+us.getNombre()+"','"
+		+us.getPass()+"','"
+		+us.getPreguntaSeguridad()+"',"
+		+Integer.parseInt(us.getSelecSeguridad())+","
+		+us.getBaneado()+")";
 		
 		try {
 			stmt.executeUpdate(query);
@@ -150,9 +156,9 @@ public class BD {
 				//	String contrasenya = Encriptado.desencriptar(this.key, this.iv, rs.getString("password"));
 					String contrasenya = rs.getString("password");
 					
-					int baneado = rs.getInt("baneado");
+					String baneado = rs.getString("baneado");
 					
-					if(baneado==0) {
+					if(!baneado.equals("si")) {
 						
 					
 					if(nombre.equals(nom)) {

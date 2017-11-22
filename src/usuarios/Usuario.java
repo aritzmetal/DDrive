@@ -33,6 +33,16 @@ public class Usuario implements Serializable {
 		this.baneado = "no";
 		
 	}
+	
+	public Usuario(String nombre,String pass, String preguntaSeguridad, String selecSeguridad) {
+		this.DNI="111A";
+		this.nombre=nombre;
+		this.pass=pass;
+		this.preguntaSeguridad=preguntaSeguridad;
+		this.selecSeguridad=selecSeguridad;
+		this.baneado="no";
+				
+	}
 
 	public String getDNI() {
 		return DNI;

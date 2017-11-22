@@ -17,6 +17,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -29,17 +31,19 @@ import seguridad.Encriptado;
 import usuarios.Usuario;
 import javax.swing.LayoutStyle.ComponentPlacement;
 
+import Cliente.Mensaje;
 import datos.BD;
 import excepciones.BaneadoException;
 import excepciones.ExisteException;
 
 import javax.swing.JComboBox;
 
-public class Registro extends JDialog {
+public class Registro extends JFrame {
 	
-	public BD bd;
+	private ObjectOutputStream os;
+	private ObjectInputStream is;
+//---------------------------------------->Flujos de datos
 	
-//	private ArrayList<Usuario> listaUsers;
 	public JFrame padre;
 	private JTextPane textPane;
 //--------------------------------------->Campos de texto	
@@ -68,13 +72,13 @@ public class Registro extends JDialog {
 //--------------------------------------->Combo box	
 	JComboBox comboBox;
 
-	public Registro(BD bd, JFrame padre, boolean modal) {
-		super(padre, modal);
+	public Registro( JFrame padre,ObjectOutputStream os,ObjectInputStream is) {
 		
 		
 		lista = new String[4];
-		this.bd=bd;
 		this.padre=padre;
+		this.os =os;
+		this.is =is;
 		
 
 		this.setBounds(600, 300, 600, 440);
@@ -104,7 +108,13 @@ public class Registro extends JDialog {
 					case 0:			
 						
 						System.out.println("usuario no encontrado procediendo a insertarlo");
-					Registro.this.bd.crearUsuario("1111A", textField.getText(),passwordField.getText(), textField_1.getText(), comboBox.getSelectedIndex());			
+						try {
+							os.writeObject(new Mensaje(new Usuario( textField.getText(),passwordField.getText(), textField_1.getText(), String.valueOf(comboBox.getSelectedIndex())), "REG"));
+						} catch (IOException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+								
 					textPane.setText("Registro correcto");
 					//------------------------------------>Crear la carpeta pertinente del usuario
 											new File("./src/folders/"+textField.getText()).mkdir();
@@ -113,18 +123,48 @@ public class Registro extends JDialog {
 											padre.setVisible(true);
 					case 1:
 						textPane.setText("ERROR:\n Usuario existente, pruebe otra vez.");
+						try {
+							os.writeObject(new Mensaje(new Usuario( textField.getText(),passwordField.getText(), textField_1.getText(), String.valueOf(comboBox.getSelectedIndex())), "ERR"));
+						} catch (IOException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
 						break;
 					case 2: 
 						textPane.setText("ERROR:\n Usuario existente, pruebe otra vez.");
+						try {
+							os.writeObject(new Mensaje(new Usuario( textField.getText(),passwordField.getText(), textField_1.getText(), String.valueOf(comboBox.getSelectedIndex())), "ERR"));
+						} catch (IOException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
 						break;
 					case 3:
 						textPane.setText("Las contraseñas no son iguales");
+						try {
+							os.writeObject(new Mensaje(new Usuario( textField.getText(),passwordField.getText(), textField_1.getText(), String.valueOf(comboBox.getSelectedIndex())), "ERR"));
+						} catch (IOException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
 						break;
 					case 4:
 						textPane.setText("Rellena todos los campos!!!");
+						try {
+							os.writeObject(new Mensaje(new Usuario( textField.getText(),passwordField.getText(), textField_1.getText(), String.valueOf(comboBox.getSelectedIndex())), "ERR"));
+						} catch (IOException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
 						break;
 					default:
 						textPane.setText("");
+						try {
+							os.writeObject(new Mensaje(new Usuario( textField.getText(),passwordField.getText(), textField_1.getText(), String.valueOf(comboBox.getSelectedIndex())), "ERR"));
+						} catch (IOException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
 						break;
 					}
 				
@@ -153,6 +193,14 @@ public class Registro extends JDialog {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				
+				
+				try {
+					os.writeObject(new Mensaje(new Usuario(), "CLOSE"));
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 				dispose();
 				padre.setVisible(true);
 			}
@@ -268,10 +316,22 @@ public class Registro extends JDialog {
 				if(Arrays.equals(this.passwordField.getPassword(), this.passwordField_1.getPassword())){
 				
 				 try {
-					seleccion = this.bd.seleccionarUsuario(this.textField.getText(), this.passwordField.getText());
-				} catch (BaneadoException e) {
+				Usuario	 us = new Usuario(this.textField.getText(),this.passwordField.getText());
+					 
+					 os.writeObject(new Mensaje(us, "REG"));
+					 
+					 //Esperar a la respuesta del handler
+					 Mensaje msg = (Mensaje) is.readObject();
+					 System.out.println(msg.toString());
+					 
+					seleccion = Integer.parseInt(msg.getMess());
+					System.out.println(seleccion);
+				} catch (IOException e) {
 					// TODO Auto-generated catch block
-					e.printStackTrace();
+					System.out.println("Ioexception");
+				} catch (ClassNotFoundException e) {
+					// TODO Auto-generated catch block
+					System.out.println("No se encuentra clase");
 				}
 			
 				
@@ -310,7 +370,6 @@ public class Registro extends JDialog {
 			while(linea!=null && i<4){				
 				if(linea!=null ){
 					linea = bfr.readLine();	
-					//System.out.println(linea);
 					lista[i]=linea;
 					i++;
 					

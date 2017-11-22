@@ -356,9 +356,11 @@ public class Login extends JFrame implements Runnable {
 					Mensaje msg = new Mensaje(us, "envio");
 					//Enviar mensaje al servidor para realizar el login
 					os.writeObject(msg);
-					
+					System.out.println(msg.toString());
 					//Recibir la respuesta del server
+					synchronized(is) {
 					 msg=(Mensaje) is.readObject();
+					}
 					textPane.setText(msg.getMess());
 				
 				} catch (Exception e1) {
@@ -372,9 +374,15 @@ public class Login extends JFrame implements Runnable {
 	}
 
 	private void crearRegistro(ActionEvent e) {
-		//Registro reg = new Registro(bd, this, true) ;
-		//this.dispose();
-		//reg.setVisible(true);
+		try {
+			os.writeObject(new Mensaje(new Usuario(),"REG"));
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		Registro reg = new Registro(this,os, is) ;
+		this.dispose();
+		reg.setVisible(true);
 		//JDialog jd = new JDialog(reg, Dialog.ModalityType.DOCUMENT_MODAL);
 		revalidate();
 	}

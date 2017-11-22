@@ -61,7 +61,7 @@ public class ClientHandler extends Thread {
 			
 		
 		} else {
-			ta.append("Usuario o contraseña erroneos \n \nPrueba a registrarte... \n");
+			ta.append("Usuario o contraseña erroneos \n Prueba a registrarte... \n");
 				
 		}
 		return login;
@@ -99,9 +99,27 @@ public class ClientHandler extends Thread {
   		int opc =0;
 		while(opc!=2) {
 		try {
-			msg = (Mensaje) is.readObject();									  //Lee el objeto del socket
+			synchronized(is) {
+			msg = (Mensaje) is.readObject();	
+			}
+			if(msg.getMess().equals("REG")) {
+				RegistroHandler rh = new RegistroHandler(os, is,bd,ta);
+				Thread registroThread =new Thread(rh);
+				registroThread.start();
+				//Esperar que el registro acabe
+				while(registroThread.isAlive()) {
+					ClientHandler.sleep(1500);
+				}
+				//msg = (Mensaje) is.readObject();		
+				}
+			
+			//Lee el objeto del socket
+			if(msg.getMess().equals("envio")) {
 			us = msg.getUs();
+			
+			ta.append("Entrando en login\n");
 			 opc = realizarLogin(us.getNombre(), us.getPass());
+			 ta.append("Login realizado\n");
 					switch (opc) {
 					case 2:
 						os.writeObject(new Mensaje(us, "OK"));
@@ -111,11 +129,13 @@ public class ClientHandler extends Thread {
 						os.writeObject(new Mensaje(us, "ERR"));
 						ta.append("Proceso de login incorrecto del usuario "+ us.getNombre()+"\n");
 					}
-		
+			}
+			
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
 		}
 		
 		  /* Entra un nuevo cliente */
