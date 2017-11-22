@@ -141,21 +141,11 @@ public class Registro extends JFrame {
 						break;
 					case 3:
 						textPane.setText("Las contraseñas no son iguales");
-						try {
-							os.writeObject(new Mensaje(new Usuario( textField.getText(),passwordField.getText(), textField_1.getText(), String.valueOf(comboBox.getSelectedIndex())), "ERR"));
-						} catch (IOException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						}
+						
 						break;
 					case 4:
 						textPane.setText("Rellena todos los campos!!!");
-						try {
-							os.writeObject(new Mensaje(new Usuario( textField.getText(),passwordField.getText(), textField_1.getText(), String.valueOf(comboBox.getSelectedIndex())), "ERR"));
-						} catch (IOException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						}
+						
 						break;
 					default:
 						textPane.setText("");

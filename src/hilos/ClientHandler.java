@@ -40,12 +40,12 @@ public class ClientHandler extends Thread {
   private int clientesMaximos;
   private JTextArea ta;
 
-  public ClientHandler(Socket clientSocket, ClientHandler[] threads,JTextArea ta) {
+  public ClientHandler(BD bd,Socket clientSocket, ClientHandler[] threads,JTextArea ta) {
     this.clientSocket = clientSocket;
     this.threads = threads;
     this.ta = ta;
     clientesMaximos = threads.length;
-    bd = new BD();
+    this.bd=bd;
    
   }
   

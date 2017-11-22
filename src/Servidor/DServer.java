@@ -37,9 +37,10 @@ import excepciones.NoUsuarioException;
 import java.awt.Font;
 
 public class DServer extends JFrame{
+	private BD bd;
 	
 	public DServer() {
-		
+		bd=new BD();
 
 		
 		inicializarVentana();
@@ -172,7 +173,7 @@ public class DServer extends JFrame{
 			
 			for (i = 0; i < MaxClientes; i++) {
 		          if (hilosClientes[i] == null) {
-		            (hilosClientes[i] = new ClientHandler(cliente, hilosClientes,textArea)).start();
+		            (hilosClientes[i] = new ClientHandler(bd,cliente, hilosClientes,textArea)).start();
 		           ta.append("conexion con cliente nuevo \n");
 		            break;
 		          }
