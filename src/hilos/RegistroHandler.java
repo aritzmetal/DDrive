@@ -66,10 +66,10 @@ public class RegistroHandler implements Runnable {
 				}else {
 					ta.append("Error en el registro");
 				}
-				// Enviamos el usuario de vuelta con el mensaje del proceso de login
+			
 				
 				
-				
+			
 				
 				
 			} catch (ClassNotFoundException e) {

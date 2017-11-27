@@ -12,5 +12,7 @@
 	<classpathentry kind="lib" path="C:/UCanAccess-4.0.2-bin/lib/hsqldb.jar"/>
 	<classpathentry kind="lib" path="C:/UCanAccess-4.0.2-bin/lib/jackcess-2.1.6.jar"/>
 	<classpathentry kind="lib" path="C:/UCanAccess-4.0.2-bin/ucanaccess-4.0.2.jar"/>
+	<classpathentry kind="lib" path="substance-lite-feel.jar"/>
+	<classpathentry kind="lib" path="substance.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -141,6 +141,7 @@ public class DServer extends JFrame{
 		case "exit":
 			
 			try {
+			
 				servidor.close();
 				System.exit(0);
 				
@@ -174,6 +175,7 @@ public class DServer extends JFrame{
 			for (i = 0; i < MaxClientes; i++) {
 		          if (hilosClientes[i] == null) {
 		            (hilosClientes[i] = new ClientHandler(bd,cliente, hilosClientes,textArea)).start();
+		            hilosClientes[i].setName("hilo_"+i);
 		           ta.append("conexion con cliente nuevo \n");
 		            break;
 		          }
@@ -225,6 +227,3 @@ public class DServer extends JFrame{
 	
 		  }
 }
-		
-
-

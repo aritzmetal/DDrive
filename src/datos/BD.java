@@ -109,8 +109,11 @@ public class BD {
 	
 	/**
 	 *
-	 * Metodo que realiza el login dentro de la base de datos
-	 * @param int seleccion 
+	 *
+	 *  devuelve @param seleccion con el dato de la columna que le pidamos.
+	 * este metodo en concreto lo usamos para obtener el integer que representa
+	 * la seleccion de seguridad del usuario de forma segura
+	 *  
 	 * 
 	 */
 	

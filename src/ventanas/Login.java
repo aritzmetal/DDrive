@@ -35,7 +35,11 @@ import javax.swing.GroupLayout;
 import javax.swing.ImageIcon;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.event.AncestorListener;
+import javax.swing.event.PopupMenuEvent;
+import javax.swing.event.PopupMenuListener;
 
+import org.jvnet.substance.skin.SubstanceRavenLookAndFeel;
 
 import excepciones.BaneadoException;
 import excepciones.NoUsuarioException;
@@ -43,6 +47,8 @@ import excepciones.PassIncorrectaException;
 import seguridad.Encriptado;
 
 import javax.swing.JTextPane;
+import javax.swing.LookAndFeel;
+
 import java.awt.Font;
 import java.awt.Color;
 import javax.swing.JPopupMenu;
@@ -52,6 +58,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 import javax.swing.SwingConstants;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
 import Cliente.Mensaje;
 import datos.BD;
@@ -112,6 +120,7 @@ public class Login extends JFrame implements Runnable {
 	
 	public Login(String[] args) {
 		
+		
 		//Inicializacion del socket y puerto
 		 if (args.length < 2) {
 		      System.out.println("Usage: java MultiThreadChatClient <host> <portNumber>\n"
@@ -129,7 +138,7 @@ public class Login extends JFrame implements Runnable {
 
 		this.setVisible(true);
 		this.setBounds(600, 300, 600, 400);
-		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		this.setResizable(false);
 
 		panel = new JPanel();
@@ -148,7 +157,18 @@ public class Login extends JFrame implements Runnable {
 
 		btnCancelar = new JButton("Cancelar");
 		btnCancelar.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
+			public void actionPerformed(ActionEvent arg0) {		
+				try {
+					os.writeObject(new Mensaje(new Usuario(),"CLOSE"));
+					Thread.sleep(1000);
+					
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				System.exit(0);
 			}
 		});
@@ -308,23 +328,52 @@ public class Login extends JFrame implements Runnable {
 
 			popupMenu.add(passwordField_2);
 			popupMenu.add(panel_3);
+			popupMenu.addPopupMenuListener(new PopupMenuListener() {
+				
+				@Override
+				public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
+					// TODO Auto-generated method stub
+					
+				}
+				
+				@Override
+				public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
+					// TODO Auto-generated method stub
+					
+				}
+				
+				@Override
+				public void popupMenuCanceled(PopupMenuEvent e) {
+					try {
+						os.writeObject(new Mensaje(new Usuario(), "NOPOPUP"));
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					
+				}
+			});
 
 			btnCorregir_1 = new JButton("Corregir");
 
 			JButton btnAceptar_1 = new JButton("Aceptar");
 			panel_3.add(btnAceptar_1);
 			
+			
 			btnAceptar_1.addActionListener(new ActionListener() {
 				
 				@Override
 				public void actionPerformed(ActionEvent e) {
+					Usuario us = new Usuario(textField.getText(), passwordField_1.getText(), textField_3.getText());
 					try {
-						mostrarPregSeguridad();
-						realizarCambio(Login.this.textField.getText());//Falta hacer el cambio de pass que tenemos ya implementado en bd
-					} catch (NoUsuarioException e1) {
+						if(passwordField_1.getText().equals(passwordField_2.getText())) {
+							os.writeObject(new Mensaje(us, "CAMBIO"));
+						}else {
+							os.writeObject(new Mensaje(us,"NOPOPUP"));
+							textPane.setText("\nError en el cambio:\nContrase\u00f1as diferentes");
+						}
 						
-						e1.printStackTrace();
-					} catch (PassIncorrectaException e1) {
+					} catch (IOException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
@@ -372,6 +421,13 @@ public class Login extends JFrame implements Runnable {
 
 		
 	}
+	
+	private void limpiarPopup() {
+		Login.this.textPane_1.setText("");
+		Login.this.textField_3.setText("");
+		Login.this.passwordField_1.setText("");
+		Login.this.passwordField_2.setText("");
+	}
 
 	private void crearRegistro(ActionEvent e) {
 		try {
@@ -383,72 +439,31 @@ public class Login extends JFrame implements Runnable {
 		Registro reg = new Registro(this,os, is) ;
 		this.dispose();
 		reg.setVisible(true);
-		//JDialog jd = new JDialog(reg, Dialog.ModalityType.DOCUMENT_MODAL);
-		revalidate();
+			revalidate();
 	}
 
 
-/*
-	public String realizarLogin(String nom,String pass) throws BaneadoException, NoUsuarioException {
-		int login=0;
-		try {
-		 login = bd.seleccionarUsuario(nom, pass);
-		}catch (BaneadoException e) {
-			e.printStackTrace();
-		}
-		if (login==2) {
-			textPane.setText("Usuario  y contraseña correctos, entrando...\n");
-			logerLogin.log(Level.FINE, "Login correcto");
-//			DynamicTreeDemo cargarArbol= new DynamicTreeDemo(this,textField.getText());
-//			this.setVisible(false);
-			return textField.getText();
-		
-		} else {
-			textPane.setText("Usuario o contraseña erroneos \n \nPrueba a registrarte...");
-			passwordField.setText("");
-			throw new NoUsuarioException(textField.getText());
-		}
-	}
-*/
+
 	
-	//------------------------------------------------------------>Solo hace el cambio en el array, no en el fichero asi que es aparente
-	private void realizarCambio (String nom) throws PassIncorrectaException{
-		String pass = new String(passwordField_2.getPassword());
-		/*String preg_seguridad =(String) this.bd.obtenerSeleccion(nom,"pregunta_seguridad");
-						
-		if(preg_seguridad.equals(textField_3.getText())){
-			if(Arrays.equals(passwordField_1.getPassword(),passwordField_2.getPassword())){
-				
-				this.bd.cambiarPass(textField.getText(), passwordField_1.getText());
-		
-			}
-		}*/
-	}
 
-	 public void mostrarPregSeguridad () throws  NoUsuarioException{
-		/* Registro.cargarSeleccion(lista);		 
+
+	 public void mostrarPregSeguridad (int pregunta) throws  NoUsuarioException{
+		 Registro.cargarSeleccion(lista);		 
 		 int  preg_seg=0;
 			
 		 if(!(this.textField.getText().length()==0)) {
 			 
-			preg_seg =(int) this.bd.obtenerSeleccion(this.textField.getText(),"seleccion_seguridad");
-			
-			 
-		 }else {
-			 try {
-				throw new IOException();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			preg_seg = pregunta;			
+			textPane_1.setText(lista[preg_seg]);
+			System.out.println("Finalizado");
 		 }
 		 
-		//Comprobamos que haya devuelto
+		 
 			
 				
-				textPane_1.setText(lista[preg_seg]);
+				
 			
-	*/	
+		
 	 }
 
 	 
@@ -456,15 +471,28 @@ public class Login extends JFrame implements Runnable {
 	 
 	private static void addPopup(Login log,Usuario us,JTextField textF,Component component, final JPopupMenu popup) {
 		component.addMouseListener(new MouseAdapter() {
-			public void mousePressed(MouseEvent e) {			
+			public void mousePressed(MouseEvent e) {
+				log.limpiarPopup();
 				showMenu(e,textF);
-
 				try {
-					log.mostrarPregSeguridad();
-				} catch (NoUsuarioException ex) {
-					ex.mostrarNombre();
-					}
+					os.writeObject(new Mensaje(new Usuario(textF.getText(), null), "CAMBIO"));
+					int pregunta = (int) is.readObject();
+					
+					if(pregunta!=5)
+					log.mostrarPregSeguridad(pregunta);
 				
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (NoUsuarioException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (ClassNotFoundException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				
+					
 			}
 
 			public void mouseReleased(MouseEvent e) {
@@ -475,6 +503,7 @@ public class Login extends JFrame implements Runnable {
 			private void showMenu(MouseEvent e,JTextField text) {
 				if (!popup.isVisible() && text.getText()!="" ){
 						popup.show(e.getComponent(), e.getX(), e.getY());
+						
 				}
 			}
 		});
@@ -483,6 +512,15 @@ public class Login extends JFrame implements Runnable {
 	@Override
 	public void run() {
 		 try {
+			 /*
+			 try {
+					UIManager.setLookAndFeel((LookAndFeel) new SubstanceRavenLookAndFeel());
+				} catch (UnsupportedLookAndFeelException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				*/
+			 
 				clientSocket = new Socket(host, puertoDefecto);
 			
 		     

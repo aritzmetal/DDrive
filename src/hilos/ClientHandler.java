@@ -74,14 +74,15 @@ public class ClientHandler extends Thread {
 
     
     try {
+        /*
+         *Imput y outputstreams para el handler y sus derivados
+         */
     	 ObjectInputStream is;
     	 ObjectOutputStream os;
     	 
    		 is = new ObjectInputStream(clientSocket.getInputStream());
   		 os =new ObjectOutputStream(clientSocket.getOutputStream());
-      /*
-       * Create input and output streams for this client.
-       */
+ 
   		 int num=0;
 			    for (int i = 0; i < maxClientsCount; i++) {
 			      if (threads[i] != null) {
@@ -110,6 +111,7 @@ public class ClientHandler extends Thread {
 				while(registroThread.isAlive()) {
 					ClientHandler.sleep(1500);
 				}
+
 				//msg = (Mensaje) is.readObject();		
 				}
 			
@@ -124,12 +126,35 @@ public class ClientHandler extends Thread {
 					case 2:
 						os.writeObject(new Mensaje(us, "OK"));
 						ta.append("Usuario logeado correctamente \n");
+						  ta.append("Bienvenido" + us.getNombre()
+					      + " to our chat room.\nTo leave enter /quit in a new line.");
+						  
 						break;
 					default:
 						os.writeObject(new Mensaje(us, "ERR"));
 						ta.append("Proceso de login incorrecto del usuario "+ us.getNombre()+"\n");
 					}
 			}
+			
+			if(msg.getMess().equals("CAMBIO")) {
+				CambioHandler ch = new CambioHandler(msg.getUs(),bd, ta,os, is);
+				Thread cambioThread = new Thread(ch);
+				cambioThread.start();
+				while(cambioThread.isAlive()) {
+					ClientHandler.sleep(1500);
+				}
+				
+				
+				
+			}
+			
+			if(msg.getMess().equals("CLOSE")) {
+				ta.append("\n Proceso login cancelado");
+				break;
+					
+			}
+			
+				
 			
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -138,22 +163,9 @@ public class ClientHandler extends Thread {
 		
 		}
 		
-		  /* Entra un nuevo cliente */
+  
 		  
-   
-		  ta.append("Bienvenido" + us.getNombre()
-		      + " to our chat room.\nTo leave enter /quit in a new line.");
-		  synchronized (this) {
-		    for (int i = 0; i < maxClientsCount; i++) {
-		      if (threads[i] != null && threads[i] == this) {
-		        clientName = "@" + us.getNombre();
-		        break;
-		      }
-		    }  
-		  }
-    
-		  
-		  ta.append("*** Adios " + us.getNombre() + " ***");
+		ta.append("\n Cerrando hilo login"); 
 		
 
 		  is.close();
