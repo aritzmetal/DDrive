@@ -1,13 +1,11 @@
 package ventanas;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.swing.JFrame;
 
-import usuarios.Usuario;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.Dialog;
@@ -39,15 +37,13 @@ import javax.swing.event.AncestorListener;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
-import org.jvnet.substance.skin.SubstanceRavenLookAndFeel;
-
+import datos.Mensaje;
 import excepciones.BaneadoException;
 import excepciones.NoUsuarioException;
 import excepciones.PassIncorrectaException;
-import seguridad.Encriptado;
+import usuarios.Usuario;
 
 import javax.swing.JTextPane;
-import javax.swing.LookAndFeel;
 
 import java.awt.Font;
 import java.awt.Color;
@@ -55,14 +51,7 @@ import javax.swing.JPopupMenu;
 import java.awt.Component;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-
-import javax.swing.SwingConstants;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
-
-import Cliente.Mensaje;
-import datos.BD;
+import java.awt.image.BufferedImage;
 
 public class Login extends JFrame implements Runnable {
 	private Logger logerLogin;
@@ -122,13 +111,17 @@ public class Login extends JFrame implements Runnable {
 		
 		
 		//Inicializacion del socket y puerto
-		 if (args.length < 2) {
+		 
 		      System.out.println("Usage: java MultiThreadChatClient <host> <portNumber>\n"
 		              + "Now using host=" + host + ", portNumber=" + puertoDefecto);
-		    } else {
-		      host = args[0];
-		      puertoDefecto = Integer.valueOf(args[1]).intValue();
-		    }
+		     
+//		     host = args[0];
+//		     puertoDefecto = Integer.valueOf(args[1]).intValue();
+		   
+		      
+		      host = "localhost";
+		      puertoDefecto = 1050;
+		      
 		
 		//Iniciamos aqui la base de datos
 		logerLogin = Logger.getLogger("ventanas.Login");
@@ -260,17 +253,21 @@ public class Login extends JFrame implements Runnable {
 
 		// -----------------------------> Cambiar el tamaño a las imagenes
 		try {
+			
+			Image registro = ImageIO.read(new File("Register.png"));
+			Image key = ImageIO.read(new File("key.png"));
+	/*		
 			Image registro = ImageIO.read(getClass().getResource("Register.png"));
 			Image key = ImageIO.read(getClass().getResource("key.png"));
 
 			Image registrotam = registro.getScaledInstance(btnRegistro.getWidth(), btnRegistro.getHeight(),
-					java.awt.Image.SCALE_SMOOTH);
+					Image.SCALE_SMOOTH);
 			Image keyTamanyo = key.getScaledInstance(btnKey.getWidth(), btnKey.getHeight(),
-					java.awt.Image.SCALE_SMOOTH);
+					Image.SCALE_SMOOTH);
 
 			registro = registrotam;
 			key = keyTamanyo;
-
+	*/
 			btnRegistro.setIcon(new ImageIcon(registro));
 			btnKey.setIcon(new ImageIcon(key));
 

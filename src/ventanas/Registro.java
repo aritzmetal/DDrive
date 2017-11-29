@@ -3,7 +3,6 @@ package ventanas;
 import java.awt.BorderLayout;
 import javax.swing.JPanel;
 import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.DefaultComboBoxModel;
@@ -19,26 +18,26 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.ArrayList;
 import java.util.Arrays;
 
 import javax.swing.JTextField;
 import javax.swing.JPasswordField;
 import javax.swing.JTextPane;
 
-import main.Main;
-import seguridad.Encriptado;
 import usuarios.Usuario;
 import javax.swing.LayoutStyle.ComponentPlacement;
 
-import Cliente.Mensaje;
-import datos.BD;
-import excepciones.BaneadoException;
+import datos.Mensaje;
 import excepciones.ExisteException;
 
 import javax.swing.JComboBox;
 
 public class Registro extends JFrame {
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	
 	private ObjectOutputStream os;
 	private ObjectInputStream is;
@@ -70,7 +69,7 @@ public class Registro extends JFrame {
 	private String[] lista;
 	
 //--------------------------------------->Combo box	
-	JComboBox comboBox;
+	JComboBox<String> comboBox;
 
 	public Registro( JFrame padre,ObjectOutputStream os,ObjectInputStream is) {
 		
@@ -232,10 +231,10 @@ public class Registro extends JFrame {
 		lblPreguntaSeguridad = new JLabel("Pregunta Seguridad");
 		lblPreguntaSeguridad.setFont(new Font("Verdana", Font.PLAIN, 18));
 		
-		comboBox = new JComboBox();
+		comboBox = new JComboBox<String>();
 		
 		cargarSeleccion(lista);
-		comboBox.setModel(new DefaultComboBoxModel(lista));
+		comboBox.setModel(new DefaultComboBoxModel<String>(lista));
 		
 		textField_1 = new JTextField();
 		textField_1.setColumns(10);

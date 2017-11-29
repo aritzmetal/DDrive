@@ -1,10 +1,6 @@
 package main;
 
-import javax.swing.LookAndFeel;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 
-import org.jvnet.substance.skin.SubstanceRavenLookAndFeel;
 
 import ventanas.Login;
 

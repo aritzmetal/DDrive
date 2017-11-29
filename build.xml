@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="Aplicacion Cliente de DDrive" default="help" basedir=".">
+  <!-- Sets the properties here-->
+  <property name="lib.dir" location="lib"/>
+  <property name="source.dir" location="src" />
+  <property name="build.dir" location="bin" />
+  <property name="rmiregistry.port" value="1050"/>
+  <property name="rmiregistry.IP" value="127.0.0.1"/>
+
+
+<path id="classpath">
+        <fileset dir="${lib.dir}">
+            <include name="**/*.jar"/>
+            <include name="*.jar"/>
+        </fileset>
+        <pathelement location="${build.dir}"/>      
+    </path>
+ 
+  <!-- Eliminamos directorios existentes-->
+  <target name="build" description="Hacer el build de los proyectos">
+    <delete dir="${build.dir}"/>
+    <mkdir dir="${build.dir}"/>
+    <javac srcdir="${source.dir}" destdir="${build.dir}" classpathref="classpath" deprecation="true" fork="true" includeantruntime="no"/>
+    </target>
+ 
+ 
+ <target name="client" depends="build"  description="Runs Client program">
+    <java classname="main.Main" classpathref="classpath" fork="true">    
+      <arg value="${rmiregistry.IP}"/> 
+      <arg value="${rmiregistry.port}"/> 
+        </java>
+    </target>
+
+ <target name="help">
+    <echo>Usage: ant [build | client]</echo>
+  </target>
+
+ 
+</project>

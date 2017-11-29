@@ -4,10 +4,12 @@ import java.io.*;
 import java.util.ArrayList;
 
 import excepciones.BaneadoException;
-import seguridad.Encriptado;
 
 public class Usuario implements Serializable {
 
+	//clave para que sea igual la serializacion en los dos proyectos
+	 private static final long serialVersionUID = 1L;
+	 
 	private static String key = "92AE31A79FEEB2A3"; // llave
 	private static String iv = "0123456789ABCDEF";// Vector de encriptación
 
@@ -135,128 +137,9 @@ public class Usuario implements Serializable {
 	}
 	// ----------------------------------------------------------------------->>
 
-/*	public void escribirEnFichero() {
-		String nom = "./src/usuarios/usuarios.txt";
 
-		try {
-			File f = new File(nom);
-
-			if (!f.exists()) {
-				f.createNewFile();
-			}
-			FileWriter fw = new FileWriter(f, true);
-			BufferedWriter bfw = new BufferedWriter(fw);
-
-			bfw.write(this.nombre + "\n");
-			bfw.write(this.DNI + "\n");
-
-			try {
-				bfw.write(Encriptado.encriptar(key, iv, this.pass) + "\n");
-				System.out.println(Encriptado.encriptar(key, iv, this.pass) + " Pass encriptada");
-			} catch (Exception e) {
-
-				e.printStackTrace();
-			}
-
-			bfw.write(this.preguntaSeguridad + "\n");
-			bfw.write(this.selecSeguridad + "\n");
-			bfw.write(this.baneado + "\n");
-
-			bfw.flush();
-			bfw.close();
-			fw.close();
-
-		} catch (IOException e) {
-
-			e.printStackTrace();
-		}
-
-	}*/
-	
-	
-	/*
-	 * public static void main(String[] args) {
-	 * 
-	 * ArrayList<Usuario> ar = new ArrayList<Usuario>();
-	 * 
-	 * Usuario user= new Usuario(); user.setDNI("222");
-	 * user.setNombre("cacague"); user.pass="pass123"; user.escribirEnFichero();
-	 * 
-	 * volcarUsuarios(ar);
-	 * 
-	 * for(Usuario us: ar){ System.out.println(us.getNombre());
-	 * System.out.println(us.pass); } }
-	 * 
-	 */
-	
-	public String encriptar(String linea){
-		String enc=null;
-		try {
-			enc=Encriptado.encriptar(key, iv, linea);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return enc;
-	}
-	
-	public String desenencriptar(String linea){
-		String enc=null;
-		try {
-			enc=Encriptado.desencriptar(key, iv, linea);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return enc;
-	}
 	
 
 
-/*	public static void volcarUsuarios(ArrayList<Usuario> ar) {
-		String nom = "./src/usuarios/usuarios.txt";
-		try {
-			File f = new File(nom);
 
-			FileReader fr = new FileReader(f);
-			BufferedReader bfr = new BufferedReader(fr);
-
-			String linea = "";
-			while (linea != null) {
-				Usuario user = new Usuario();
-
-				linea = bfr.readLine();
-				user.setNombre(linea);
-
-				linea = bfr.readLine();
-				user.setDNI(linea);
-
-				linea = bfr.readLine();
-				if (linea != null) {
-					try {
-						linea = Encriptado.desencriptar(key, iv, linea);
-						user.pass = linea;
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				}
-				;
-
-				linea = bfr.readLine();
-				user.setPreguntaSeguridad(linea);
-
-				linea = bfr.readLine();
-				user.setSelecSeguridad(linea);
-
-				linea = bfr.readLine();
-				user.setBaneado(linea);
-
-				ar.add(user);
-
-			}
-			ar.remove(ar.size() - 1);
-			bfr.close();
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}*/
 }
