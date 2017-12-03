@@ -1,7 +1,5 @@
 package ventanas;
 
-import java.util.ArrayList;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.swing.JFrame;
@@ -101,11 +99,13 @@ public class Login extends JFrame implements Runnable {
 	private JLabel lblNuevaContrasea;
 	private JLabel lblRespuestaSeguridad;
 	private JLabel lblPreguntaSeguridad;
+	private JLabel lblLogo;
 	
 	//----------------------------------------------->Lista
 	
 	private String[] lista;
 	Usuario us;
+	
 	
 	public Login(String[] args) {
 		
@@ -114,14 +114,14 @@ public class Login extends JFrame implements Runnable {
 		 
 		      System.out.println("Usage: java MultiThreadChatClient <host> <portNumber>\n"
 		              + "Now using host=" + host + ", portNumber=" + puertoDefecto);
-		     
-//		     host = args[0];
-//		     puertoDefecto = Integer.valueOf(args[1]).intValue();
-		   
+
 		      
-		      host = "localhost";
-		      puertoDefecto = 1050;
+//		      host = "localhost";
+//		      puertoDefecto = 1050;
 		      
+		     host = args[0];
+		     puertoDefecto = Integer.valueOf(args[1]).intValue();
+		   	      
 		
 		//Iniciamos aqui la base de datos
 		logerLogin = Logger.getLogger("ventanas.Login");
@@ -201,79 +201,67 @@ public class Login extends JFrame implements Runnable {
 
 		btnKey = new JButton("");
 		btnKey.setBackground(new Color(255, 235, 205));
+		
+		lblLogo = new JLabel("");
 
 
 
 		
 		GroupLayout gl_panel_2 = new GroupLayout(panel_2);
-		gl_panel_2.setHorizontalGroup(gl_panel_2.createParallelGroup(Alignment.LEADING).addGroup(gl_panel_2
-				.createSequentialGroup().addGap(158)
-				.addGroup(gl_panel_2.createParallelGroup(Alignment.LEADING, false)
-						.addGroup(gl_panel_2.createSequentialGroup().addGap(23)
-								.addComponent(lblCambiarContrasea, GroupLayout.PREFERRED_SIZE, 161,
-										GroupLayout.PREFERRED_SIZE)
-								.addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-								.addComponent(btnKey))
-						.addGroup(gl_panel_2.createParallelGroup(Alignment.TRAILING)
-								.addComponent(btnRegistro, GroupLayout.PREFERRED_SIZE, 234, GroupLayout.PREFERRED_SIZE)
-								.addComponent(textPane, GroupLayout.PREFERRED_SIZE, 258, GroupLayout.PREFERRED_SIZE)
+		gl_panel_2.setHorizontalGroup(
+			gl_panel_2.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_panel_2.createSequentialGroup()
+					.addGroup(gl_panel_2.createParallelGroup(Alignment.LEADING)
+						.addGroup(gl_panel_2.createSequentialGroup()
+							.addGap(169)
+							.addGroup(gl_panel_2.createParallelGroup(Alignment.LEADING, false)
 								.addGroup(gl_panel_2.createSequentialGroup()
+									.addGap(23)
+									.addComponent(lblCambiarContrasea, GroupLayout.PREFERRED_SIZE, 161, GroupLayout.PREFERRED_SIZE)
+									.addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+									.addComponent(btnKey))
+								.addGroup(gl_panel_2.createParallelGroup(Alignment.TRAILING)
+									.addComponent(btnRegistro, GroupLayout.PREFERRED_SIZE, 234, GroupLayout.PREFERRED_SIZE)
+									.addComponent(textPane, GroupLayout.PREFERRED_SIZE, 258, GroupLayout.PREFERRED_SIZE)
+									.addGroup(gl_panel_2.createSequentialGroup()
 										.addGroup(gl_panel_2.createParallelGroup(Alignment.LEADING)
-												.addComponent(lblNewLabel_1, GroupLayout.PREFERRED_SIZE, 76,
-														GroupLayout.PREFERRED_SIZE)
-												.addComponent(lblContrasea, GroupLayout.PREFERRED_SIZE, 93,
-														GroupLayout.PREFERRED_SIZE))
+											.addComponent(lblNewLabel_1, GroupLayout.PREFERRED_SIZE, 76, GroupLayout.PREFERRED_SIZE)
+											.addComponent(lblContrasea, GroupLayout.PREFERRED_SIZE, 93, GroupLayout.PREFERRED_SIZE))
 										.addGap(18)
 										.addGroup(gl_panel_2.createParallelGroup(Alignment.LEADING)
-												.addComponent(passwordField, 158, 158, 158).addComponent(textField,
-														GroupLayout.PREFERRED_SIZE, 158, GroupLayout.PREFERRED_SIZE)))))
-				.addContainerGap(167, Short.MAX_VALUE)));
-		gl_panel_2.setVerticalGroup(gl_panel_2.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_panel_2.createSequentialGroup().addContainerGap()
-						.addComponent(btnRegistro, GroupLayout.PREFERRED_SIZE, 49, GroupLayout.PREFERRED_SIZE)
-						.addGap(18)
-						.addGroup(gl_panel_2.createParallelGroup(Alignment.BASELINE)
-								.addComponent(lblNewLabel_1, GroupLayout.PREFERRED_SIZE, 23, GroupLayout.PREFERRED_SIZE)
-								.addComponent(textField, GroupLayout.PREFERRED_SIZE, 30, GroupLayout.PREFERRED_SIZE))
-						.addGap(26)
-						.addGroup(
-								gl_panel_2.createParallelGroup(Alignment.BASELINE)
-										.addComponent(passwordField, GroupLayout.PREFERRED_SIZE, 31,
-												GroupLayout.PREFERRED_SIZE)
-										.addComponent(lblContrasea))
-						.addPreferredGap(ComponentPlacement.UNRELATED)
-						.addGroup(gl_panel_2.createParallelGroup(Alignment.LEADING)
-								.addComponent(lblCambiarContrasea, GroupLayout.PREFERRED_SIZE, 21,
-										GroupLayout.PREFERRED_SIZE)
-								.addComponent(btnKey, GroupLayout.PREFERRED_SIZE, 30, GroupLayout.PREFERRED_SIZE))
-						.addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-						.addComponent(textPane, GroupLayout.PREFERRED_SIZE, 65, GroupLayout.PREFERRED_SIZE)
-						.addGap(22)));
+											.addComponent(passwordField, 158, 158, 158)
+											.addComponent(textField, GroupLayout.PREFERRED_SIZE, 158, GroupLayout.PREFERRED_SIZE))))))
+						.addGroup(gl_panel_2.createSequentialGroup()
+							.addGap(104)
+							.addComponent(lblLogo, GroupLayout.PREFERRED_SIZE, 72, GroupLayout.PREFERRED_SIZE)))
+					.addContainerGap(156, Short.MAX_VALUE))
+		);
+		gl_panel_2.setVerticalGroup(
+			gl_panel_2.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_panel_2.createSequentialGroup()
+					.addGroup(gl_panel_2.createParallelGroup(Alignment.LEADING)
+						.addGroup(gl_panel_2.createSequentialGroup()
+							.addContainerGap()
+							.addComponent(btnRegistro, GroupLayout.PREFERRED_SIZE, 49, GroupLayout.PREFERRED_SIZE))
+						.addComponent(lblLogo, GroupLayout.PREFERRED_SIZE, 55, GroupLayout.PREFERRED_SIZE))
+					.addGap(18)
+					.addGroup(gl_panel_2.createParallelGroup(Alignment.BASELINE)
+						.addComponent(lblNewLabel_1, GroupLayout.PREFERRED_SIZE, 23, GroupLayout.PREFERRED_SIZE)
+						.addComponent(textField, GroupLayout.PREFERRED_SIZE, 30, GroupLayout.PREFERRED_SIZE))
+					.addGap(26)
+					.addGroup(gl_panel_2.createParallelGroup(Alignment.BASELINE)
+						.addComponent(passwordField, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE)
+						.addComponent(lblContrasea))
+					.addPreferredGap(ComponentPlacement.UNRELATED)
+					.addGroup(gl_panel_2.createParallelGroup(Alignment.LEADING)
+						.addComponent(lblCambiarContrasea, GroupLayout.PREFERRED_SIZE, 21, GroupLayout.PREFERRED_SIZE)
+						.addComponent(btnKey, GroupLayout.PREFERRED_SIZE, 30, GroupLayout.PREFERRED_SIZE))
+					.addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+					.addComponent(textPane, GroupLayout.PREFERRED_SIZE, 65, GroupLayout.PREFERRED_SIZE)
+					.addGap(22))
+		);
 		panel_2.setLayout(gl_panel_2);
 
-		// -----------------------------> Cambiar el tamaño a las imagenes
-		try {
-			
-			Image registro = ImageIO.read(new File("Register.png"));
-			Image key = ImageIO.read(new File("key.png"));
-	/*		
-			Image registro = ImageIO.read(getClass().getResource("Register.png"));
-			Image key = ImageIO.read(getClass().getResource("key.png"));
-
-			Image registrotam = registro.getScaledInstance(btnRegistro.getWidth(), btnRegistro.getHeight(),
-					Image.SCALE_SMOOTH);
-			Image keyTamanyo = key.getScaledInstance(btnKey.getWidth(), btnKey.getHeight(),
-					Image.SCALE_SMOOTH);
-
-			registro = registrotam;
-			key = keyTamanyo;
-	*/
-			btnRegistro.setIcon(new ImageIcon(registro));
-			btnKey.setIcon(new ImageIcon(key));
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 		
 			popupMenu = new JPopupMenu();
 			addPopup(this,us,textField,btnKey, popupMenu);
@@ -415,6 +403,34 @@ public class Login extends JFrame implements Runnable {
 				}
 			}
 		});
+		
+		
+		// -----------------------------> Cambiar el tamaño a las imagenes
+		try {
+			
+			Image registro = ImageIO.read(getClass().getResource("Register.png"));
+			Image key = ImageIO.read(getClass().getResource("key.png"));
+			Image logo = ImageIO.read(getClass().getResource("DDriveLogo.png"));
+
+			Image registrotam = registro.getScaledInstance(btnRegistro.getWidth(), btnRegistro.getHeight(),
+					Image.SCALE_SMOOTH);
+			Image keyTamanyo = key.getScaledInstance(btnKey.getWidth(), btnKey.getHeight(),
+					Image.SCALE_SMOOTH);
+			Image keyLogo = logo.getScaledInstance(lblLogo.getWidth(), lblLogo.getHeight(),
+					Image.SCALE_SMOOTH);
+			
+
+			registro = registrotam;
+			key = keyTamanyo;
+			logo = keyLogo;
+	
+			btnRegistro.setIcon(new ImageIcon(registro));
+			btnKey.setIcon(new ImageIcon(key));
+			lblLogo.setIcon(new ImageIcon(logo));
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
 		
 	}
@@ -538,5 +554,4 @@ public class Login extends JFrame implements Runnable {
 					e1.printStackTrace();
 				}
 		  	}
-		
 }
