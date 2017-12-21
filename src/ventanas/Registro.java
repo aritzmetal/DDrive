@@ -115,9 +115,7 @@ public class Registro extends JFrame {
 						}
 								
 					textPane.setText("Registro correcto");
-					//------------------------------------>Crear la carpeta pertinente del usuario
-											new File("./src/folders/"+textField.getText()).mkdir();
-					//------------------------------------->
+				
 											dispose();	
 											padre.setVisible(true);
 					case 1:
