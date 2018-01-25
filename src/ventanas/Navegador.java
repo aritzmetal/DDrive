@@ -135,7 +135,7 @@ public class Navegador extends JFrame {
 	            DefaultMutableTreeNode padre =(DefaultMutableTreeNode) hijo.getParent();
 	            DefaultMutableTreeNode nuevo = new DefaultMutableTreeNode(seleccion);
 				
-	            if(seleccion!=null && seleccion.length()<2) {
+	            if(seleccion!=null && seleccion.length()>2) {
 	            	System.out.println("Mandando carpeta");
 	            
 				  String	pathEnviar = "";
@@ -266,7 +266,7 @@ public class Navegador extends JFrame {
 		            
 		            	textArea.setText("Archivo subido");
 		              } else {
-		            	  textArea.setText("Ningun archivo seleccionado");
+		            	  textArea.setText("Error subiendo archivo");
 		              }
 		            
 		            
