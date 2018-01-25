@@ -396,7 +396,13 @@ public class Login extends JFrame implements Runnable {
 					 msg=(Mensaje) is.readObject();
 					}
 					textPane.setText(msg.getMess());
-				
+					if(msg.getMess().equals("OK")) {
+						Login.this.setVisible(false);
+						Navegador nav = new Navegador(us,os,is);
+						nav.setVisible(true);
+						
+					}
+			
 				} catch (Exception e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();

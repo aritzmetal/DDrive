@@ -7,13 +7,27 @@ import javax.swing.JLabel;
 import java.awt.Font;
 import javax.swing.SwingConstants;
 import javax.swing.border.MatteBorder;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+
+import datos.Mensaje;
+import usuarios.Usuario;
+
 import java.awt.Color;
 import javax.swing.JScrollPane;
 import javax.swing.JEditorPane;
+import javax.swing.JFileChooser;
 import javax.swing.JTree;
 import javax.swing.JTextArea;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.nio.file.Files;
 import java.awt.event.ActionEvent;
 
 
@@ -43,9 +57,31 @@ public class Navegador extends JFrame {
 	private JEditorPane editorPane;
 	private JScrollPane scrollPane_Tree;
 	private JTree arbol;
+	DefaultTreeModel dftm;
 	
-	public Navegador() {
-		this.setBounds(300, 400, 600, 680);
+	private ObjectInputStream is;
+	private ObjectOutputStream os;
+	private Usuario us;
+	
+	public Navegador(Usuario us,ObjectOutputStream os, ObjectInputStream is) {
+		this.os=os;
+		this.is=is;
+		this.us=us;
+		
+		
+		this.setBounds(500, 200, 600, 680);
+		this.setResizable(false);
+		
+		
+		try {
+			 dftm = (DefaultTreeModel) is.readObject();
+		} catch (ClassNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		this.setVisible(true);
 		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		
@@ -70,7 +106,7 @@ public class Navegador extends JFrame {
 		panel_Central.add(panel_tree);
 		panel_tree.setLayout(new BorderLayout(0, 0));
 		
-		arbol = new JTree();
+		arbol = new JTree(dftm);
 		
 		scrollPane_Tree = new JScrollPane(arbol);
 		panel_tree.add(scrollPane_Tree);
@@ -99,9 +135,81 @@ public class Navegador extends JFrame {
 		btnSubirArchivo = new JButton("Subir Archivo");
 		btnSubirArchivo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				JFileChooser chooser = new JFileChooser();
+				  int returnVal = chooser.showOpenDialog(Navegador.this);
+				  File seleccion = null;
+		            if (returnVal == JFileChooser.APPROVE_OPTION) {
+		                seleccion = chooser.getSelectedFile();
+		                System.out.println(seleccion.getName());
+		            } 
+		            
+		            if(seleccion.isFile()) {
+		            	
+		            System.out.println("Archivo");
+		            DefaultTreeModel model = (DefaultTreeModel) arbol.getModel();
+		            System.out.println("Mandando archivo");
+		            DefaultMutableTreeNode hijo = (DefaultMutableTreeNode) arbol.getLastSelectedPathComponent();
+		            DefaultMutableTreeNode padre =(DefaultMutableTreeNode) hijo.getParent();
+		            DefaultMutableTreeNode nuevo = new DefaultMutableTreeNode(seleccion.getName());
+		           
+		            String	pathEnviar = "";
+		            Object[] paths = arbol.getSelectionPath().getPath();
+		            
+		            if( hijo.getUserObject().toString().contains(".")) {
+		            	System.out.println("es file");
+		            	model.insertNodeInto(nuevo, padre, nuevo.getChildCount());
+
+					    for (int i=1; i<paths.length; i++) {
+					    	pathEnviar += paths[i];
+					        if (i+1 <paths.length-1 ) {
+					        	pathEnviar += File.separator;
+					        }
+					    }
+		            }else {
+		            	System.out.println("Es directorio");
+		            	model.insertNodeInto(nuevo, hijo, nuevo.getChildCount());
+
+					    for (int i=1; i<paths.length; i++) {
+					    	pathEnviar += paths[i];
+					        if (i+1 <paths.length ) {
+					        	pathEnviar += File.separator;
+					        }
+					    }
+		            }
+		            
+		             pathEnviar += "/"+seleccion.getName();
+		            
+		            //Mandamos primero el nodo padre
+		         
+		           
+		            
+		            Mensaje msg1 = new Mensaje(null, "subir");
+	                try {
+						os.writeObject(msg1);
+						
+					
+					   
+					    
+					    os.writeObject(pathEnviar);
+					    
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+		            
+		            try {
+						byte[] contenidoSelccion = Files.readAllBytes(seleccion.toPath());
+						os.writeObject(contenidoSelccion);
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+		            
+		              } 
+		                
 			}
 		});
-		btnSubirArchivo.setFont(new Font("Segoe UI Black", Font.PLAIN, 11));
+		btnSubirArchivo.setFont(new Font("Segoe UI Black", Font.PLAIN, 10));
 		btnSubirArchivo.setBounds(12, 33, 105, 31);
 		panel_Botonera.add(btnSubirArchivo);
 		
@@ -157,6 +265,61 @@ public class Navegador extends JFrame {
 		editorPane = new JEditorPane();
 		editorPane.setBackground(new Color(255, 239, 213));
 		scrollPane.setViewportView(editorPane);
+		arbol.addTreeSelectionListener(new TreeSelectionListener() {
+			
+			@Override
+			public void valueChanged(TreeSelectionEvent e) {
+				DefaultMutableTreeNode nodo = (DefaultMutableTreeNode) arbol.getLastSelectedPathComponent();
+				if(nodo != null) {
+					lblNombreArchivo.setText((String) nodo.getUserObject());
+				}else {
+					lblNombreArchivo.setText("");
+				}
+					
+				
+				
+				
+				
+			}
+		});
+		
+
+		
+	}
+	
+	@Override
+	public void dispose() {
+		Mensaje msg = new Mensaje(us,"SHUT");
+		
+		try {
+			
+			System.out.println("Mandando peticion de cerrado");
+			this.os.writeObject(msg);
+		} catch (IOException e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
+		}
+		
+		System.out.println("Peticion concedida, cerrando...");
+		try {
+			Thread.sleep(100);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		System.out.println("Cerrando streams");
+		try {
+			this.is.close();
+			this.os.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		System.exit(0);
+		
+		
 		
 	}
 }
