@@ -4,6 +4,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import java.awt.Font;
 import javax.swing.SwingConstants;
 import javax.swing.border.MatteBorder;
@@ -122,13 +124,71 @@ public class Navegador extends JFrame {
 		textArea.setBackground(new Color(255, 248, 220));
 		textArea.setBounds(12, 149, 240, 63);
 		panel_Botonera.add(textArea);
-		
-		btnEditar = new JButton("Editar");
+		textArea.setEditable(false);
+		btnEditar = new JButton("Crear Carpeta");
 		btnEditar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				String seleccion = JOptionPane.showInputDialog("Nombre carpeta");
+					DefaultTreeModel model = (DefaultTreeModel) arbol.getModel();
+	            
+	            DefaultMutableTreeNode hijo = (DefaultMutableTreeNode) arbol.getLastSelectedPathComponent();
+	            DefaultMutableTreeNode padre =(DefaultMutableTreeNode) hijo.getParent();
+	            DefaultMutableTreeNode nuevo = new DefaultMutableTreeNode(seleccion);
+				
+	            if(seleccion!=null && seleccion.length()<2) {
+	            	System.out.println("Mandando carpeta");
+	            
+				  String	pathEnviar = "";
+		            Object[] paths = arbol.getSelectionPath().getPath();
+		            
+		            if( hijo.getUserObject().toString().contains(".")) {
+		            	model.insertNodeInto(nuevo, padre, nuevo.getChildCount());
+
+					    for (int i=1; i<paths.length; i++) {
+					    	pathEnviar += paths[i];
+					        if (i+1 <paths.length-1 ) {
+					        	pathEnviar += File.separator;
+					        }
+					    }
+		            }else {
+		            	System.out.println("Es directorio");
+		            	model.insertNodeInto(nuevo, hijo, nuevo.getChildCount());
+
+					    for (int i=1; i<paths.length; i++) {
+					    	pathEnviar += paths[i];
+					        if (i+1 <paths.length ) {
+					        	pathEnviar += File.separator;
+					        }
+					    }
+		            }
+		            
+		             pathEnviar += "/"+seleccion;
+		            
+		            //Mandamos primero el nodo padre
+		         
+		           
+		            
+		            Mensaje msg1 = new Mensaje(null, "carpeta");
+	                try {
+						os.writeObject(msg1);
+						
+					
+					   
+					    
+					    os.writeObject(pathEnviar);
+					    
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+	                
+	                textArea.setText("Carpeta "+ seleccion+" creada");
+	            }else {
+	            	textArea.setText("Nombre muy corto");
+	            }
 			}
 		});
-		btnEditar.setFont(new Font("Segoe UI Black", Font.PLAIN, 12));
+		btnEditar.setFont(new Font("Segoe UI Black", Font.PLAIN, 10));
 		btnEditar.setBounds(12, 77, 105, 31);
 		panel_Botonera.add(btnEditar);
 		
@@ -143,9 +203,9 @@ public class Navegador extends JFrame {
 		                System.out.println(seleccion.getName());
 		            } 
 		            
-		            if(seleccion.isFile()) {
+		            if(seleccion!=null && seleccion.isFile()) {
 		            	
-		            System.out.println("Archivo");
+		     
 		            DefaultTreeModel model = (DefaultTreeModel) arbol.getModel();
 		            System.out.println("Mandando archivo");
 		            DefaultMutableTreeNode hijo = (DefaultMutableTreeNode) arbol.getLastSelectedPathComponent();
@@ -156,7 +216,6 @@ public class Navegador extends JFrame {
 		            Object[] paths = arbol.getSelectionPath().getPath();
 		            
 		            if( hijo.getUserObject().toString().contains(".")) {
-		            	System.out.println("es file");
 		            	model.insertNodeInto(nuevo, padre, nuevo.getChildCount());
 
 					    for (int i=1; i<paths.length; i++) {
@@ -205,7 +264,12 @@ public class Navegador extends JFrame {
 						e1.printStackTrace();
 					}
 		            
-		              } 
+		            	textArea.setText("Archivo subido");
+		              } else {
+		            	  textArea.setText("Ningun archivo seleccionado");
+		              }
+		            
+		            
 		                
 			}
 		});
@@ -225,6 +289,22 @@ public class Navegador extends JFrame {
 		btnGuardar = new JButton("Guardar");
 		btnGuardar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				Mensaje msg = new Mensaje(us,"SAVE");
+				
+				try {
+					
+					System.out.println("Mandando peticion de Guardar");
+					os.writeObject(msg);
+					
+					msg = (Mensaje) is.readObject();
+					
+					textArea.setText(msg.getMess());
+				} catch (Exception ex) {
+					// TODO Auto-generated catch block
+					ex.printStackTrace();
+				} 
+				
+				
 			}
 		});
 		btnGuardar.setFont(new Font("Segoe UI Black", Font.PLAIN, 12));
@@ -252,6 +332,54 @@ public class Navegador extends JFrame {
 		btnRenombrar = new JButton("Renombrar");
 		btnRenombrar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				String nuevoNombre = JOptionPane.showInputDialog("Nuevo nombre");
+				DefaultTreeModel model = (DefaultTreeModel) arbol.getModel();
+            
+            DefaultMutableTreeNode hijo = (DefaultMutableTreeNode) arbol.getLastSelectedPathComponent();           
+            String nombreViejo = hijo.getUserObject().toString();
+            
+           
+			
+            if(nuevoNombre!=null && nuevoNombre.length()>2) {
+            	System.out.println("Cambiando nombre");
+            	
+            
+			  String	pathEnviar = "";
+	            Object[] paths = arbol.getSelectionPath().getPath();
+			            	
+
+				    for (int i=1; i<paths.length-1; i++) {
+				    	pathEnviar += paths[i];
+				        if (i+1 <paths.length ) {
+				        	pathEnviar += File.separator;
+				        }
+				    }
+	            
+	            
+	             pathEnviar += "/";
+	            
+	            
+	         
+	           
+	            
+	            Mensaje msg1 = new Mensaje(us, "RENOM");
+                try {
+					os.writeObject(msg1);								    
+				    os.writeObject(pathEnviar);
+				    os.writeObject(nombreViejo);
+				    os.writeObject(nuevoNombre);
+				    
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+                
+                textArea.setText("Nombre "+ nuevoNombre+" cambiado");
+                hijo.setUserObject(nuevoNombre);
+                model.nodeChanged(hijo);
+            }else {
+            	textArea.setText("Nombre muy corto");
+            }
 			}
 		});
 		btnRenombrar.setFont(new Font("Segoe UI Black", Font.PLAIN, 12));

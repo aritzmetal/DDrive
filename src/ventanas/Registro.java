@@ -182,12 +182,7 @@ public class Registro extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				
 				
-				try {
-					os.writeObject(new Mensaje(new Usuario(), "CLOSE"));
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
+				
 				dispose();
 				padre.setVisible(true);
 			}
@@ -336,7 +331,12 @@ public class Registro extends JFrame {
 	
 	@Override
     public void dispose(){
-        
+		try {
+			os.writeObject(new Mensaje(new Usuario(), "CLOSE"));
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		this.padre.setVisible(true);
         super.dispose();
     }
